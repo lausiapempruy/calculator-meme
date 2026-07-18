@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover" />
+<title>Calculator Pro Max Ultra Universe AI++</title>
+<meta name="description" content="A premium-looking calculator that constantly begs you for fake money." />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- Ambient background -->
+  <div class="bg-glow bg-glow--one" aria-hidden="true"></div>
+  <div class="bg-glow bg-glow--two" aria-hidden="true"></div>
+
+  <!-- Toast container -->
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <main class="app">
+
+    <header class="brand">
+      <div class="brand__badge">AI++</div>
+      <h1 class="brand__title">Calculator <span>Pro Max Ultra Universe</span></h1>
+      <p class="brand__subtitle">Now with 300% more premium.</p>
+    </header>
+
+    <section class="calculator" id="calculator">
+
+      <div class="calculator__topbar">
+        <span class="usage-pill" id="usagePill">Usage: 0 / 5</span>
+        <span class="status-dot" id="statusDot" title="System status"></span>
+      </div>
+
+      <div class="display" id="display">
+        <div class="display__expression" id="displayExpression">&nbsp;</div>
+        <div class="display__result" id="displayResult">0</div>
+      </div>
+
+      <div class="keypad" id="keypad">
+        <button class="key key--fn" data-action="clear">AC</button>
+        <button class="key key--fn" data-action="delete">DEL</button>
+        <button class="key key--fn" data-action="operator" data-value="%">%</button>
+        <button class="key key--op" data-action="operator" data-value="÷">÷</button>
+
+        <button class="key key--num" data-action="number" data-value="7">7</button>
+        <button class="key key--num" data-action="number" data-value="8">8</button>
+        <button class="key key--num" data-action="number" data-value="9">9</button>
+        <button class="key key--op" data-action="operator" data-value="×">×</button>
+
+        <button class="key key--num" data-action="number" data-value="4">4</button>
+        <button class="key key--num" data-action="number" data-value="5">5</button>
+        <button class="key key--num" data-action="number" data-value="6">6</button>
+        <button class="key key--op" data-action="operator" data-value="-">−</button>
+
+        <button class="key key--num" data-action="number" data-value="1">1</button>
+        <button class="key key--num" data-action="number" data-value="2">2</button>
+        <button class="key key--num" data-action="number" data-value="3">3</button>
+        <button class="key key--op" data-action="operator" data-value="+">+</button>
+
+        <button class="key key--num key--zero" data-action="number" data-value="0">0</button>
+        <button class="key key--num" data-action="decimal">.</button>
+        <button class="key key--equals" data-action="equals">=</button>
+      </div>
+    </section>
+
+    <footer class="meme-footer" id="memeFooter">Math sponsored by capitalism.</footer>
+  </main>
+
+  <!-- ===================== PREMIUM PAYWALL MODAL ===================== -->
+  <div class="overlay" id="premiumOverlay" hidden>
+    <div class="modal modal--premium" role="dialog" aria-modal="true" aria-labelledby="premiumTitle">
+      <div class="modal__icon">🚫🧠</div>
+      <h2 class="modal__title" id="premiumTitle">FREE TRIAL EXPIRED</h2>
+      <p class="modal__subtitle">You've reached the maximum intelligence allowed.</p>
+      <p class="modal__desc">Choose your premium plan to continue calculating.</p>
+
+      <div class="plans" id="plansContainer">
+        <!-- plan cards injected by payment.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== CONFIRMATION DIALOG ===================== -->
+  <div class="overlay" id="confirmOverlay" hidden>
+    <div class="modal modal--confirm" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+      <div class="modal__icon">🤔</div>
+      <h3 class="modal__title" id="confirmTitle">Are you sure you want to spend absolutely fake money?</h3>
+      <p class="modal__desc" id="confirmPlanLabel"></p>
+      <div class="modal__actions">
+        <button class="btn btn--ghost" id="confirmCancelBtn">Cancel</button>
+        <button class="btn btn--primary" id="confirmYesBtn">Yes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== LOADING SCREEN ===================== -->
+  <div class="overlay" id="loadingOverlay" hidden>
+    <div class="modal modal--loading" role="dialog" aria-modal="true" aria-live="polite">
+      <div class="spinner" aria-hidden="true">
+        <div class="spinner__ring"></div>
+        <div class="spinner__ring spinner__ring--slow"></div>
+      </div>
+      <p class="loading__message" id="loadingMessage">Talking to the bank...</p>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== SUCCESS SCREEN ===================== -->
+  <div class="overlay" id="successOverlay" hidden>
+    <div class="modal modal--success" role="dialog" aria-modal="true" aria-labelledby="successTitle">
+      <div class="checkmark" aria-hidden="true">
+        <svg viewBox="0 0 52 52">
+          <circle class="checkmark__circle" cx="26" cy="26" r="24" fill="none"/>
+          <path class="checkmark__check" fill="none" d="M14 27l7 7 17-17"/>
+        </svg>
+      </div>
+      <h2 class="modal__title" id="successTitle">Payment Successful!</h2>
+      <p class="modal__desc">You definitely didn't pay anything.</p>
+      <div class="modal__actions modal__actions--center">
+        <button class="btn btn--primary" id="continueBtn">Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <canvas id="confettiCanvas" aria-hidden="true"></canvas>
+
+  <script src="js/memes.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/animations.js"></script>
+  <script src="js/calculator.js"></script>
+  <script src="js/payment.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
