@@ -2,6 +2,12 @@
    payment.js
    Fake subscription modal + fake payment flow.
    Exposes window.Payment
+
+   v2.0 SMP Studios Edition:
+   - each plan now has its own loading message sequence
+   - each plan now has its own success title/description
+   - purchase completion reports which plan id was bought,
+     so app.js can unlock plan-specific achievements
    ========================================================= */
 (function () {
   "use strict";
@@ -33,16 +39,61 @@
     },
   ];
 
-  const LOADING_MESSAGES = [
-    "Talking to the bank...",
-    "Printing fake money...",
-    "Downloading mathematics...",
-    "Installing Premium Brain...",
-    "Contacting NASA...",
-    "Negotiating with Angry Birds...",
-    "Calculating taxes...",
-    "Loading...",
-  ];
+  // Distinct fake loading sequences per plan (v2.0)
+  const LOADING_MESSAGES = {
+    pro: [
+      "Connecting to Calculator Server...",
+      "Borrowing money from your friend...",
+      "Counting coins...",
+      "Finding discount coupon...",
+      "Almost there...",
+      "Payment accepted!",
+    ],
+    ultimate: [
+      "Negotiating with FIFA...",
+      "Asking Messi for approval...",
+      "VAR is reviewing your payment...",
+      "Ronaldo shouted SIUUUU...",
+      "Bank says \"bro really?\"",
+      "Unlocking Premium Numbers...",
+      "Installing Extra Intelligence...",
+      "Payment approved.",
+    ],
+    universe: [
+      "Launching calculator into space...",
+      "Calling NASA...",
+      "Summoning football gods...",
+      "Messi and Ronaldo are discussing your purchase...",
+      "Finding Banana Galaxy...",
+      "Searching for Universe Pack license...",
+      "Generating Infinite IQ...",
+      "Installing Quantum Mathematics...",
+      "Downloading Football DLC...",
+      "Talking to aliens...",
+      "Negotiating with Angry Birds...",
+      "Unlocking Calculator Multiverse...",
+      "Removing Skill Issue...",
+    ],
+  };
+
+  // Distinct success screen copy per plan (v2.0)
+  const SUCCESS_CONTENT = {
+    pro: {
+      title: "Payment Successful!",
+      desc: "Congratulations! You unlocked Basic Mathematics.",
+      achievement: null,
+    },
+    ultimate: {
+      title: "Payment Approved!",
+      desc: "You can now calculate like a champion. 🐐",
+      achievement: null,
+    },
+    universe: {
+      title: "Congratulations!",
+      desc: "You have officially wasted absolutely fake money.",
+      achievement: "🚀 Achievement Unlocked: Professional Fake Billionaire",
+    },
+  };
 
   // Original parody bird icon (NOT a copyrighted asset) — simple geometric
   // angry-looking round bird built from shapes, used purely as a joke motif.
@@ -63,6 +114,7 @@
   let onPurchaseComplete = null;
   let loadingTimer = null;
   let loadingMsgTimer = null;
+  let activePlan = null;
 
   function cacheEls() {
     els = {
@@ -76,6 +128,9 @@
       loadingMessage: document.getElementById("loadingMessage"),
       progressFill: document.getElementById("progressFill"),
       successOverlay: document.getElementById("successOverlay"),
+      successTitle: document.getElementById("successTitle"),
+      successDesc: document.getElementById("successDesc"),
+      successAchievement: document.getElementById("successAchievement"),
       continueBtn: document.getElementById("continueBtn"),
     };
   }
@@ -118,8 +173,6 @@
     hideOverlay(els.premiumOverlay);
   }
 
-  let activePlan = null;
-
   function openConfirm(plan) {
     activePlan = plan;
     els.confirmPlanLabel.textContent = `${plan.name} — ${plan.price}`;
@@ -135,12 +188,15 @@
     hideOverlay(els.premiumOverlay);
     showOverlay(els.loadingOverlay);
 
+    const messages = LOADING_MESSAGES[activePlan.id] || LOADING_MESSAGES.pro;
+
     els.progressFill.style.width = "0%";
     let progress = 0;
     let msgIndex = 0;
-    els.loadingMessage.textContent = LOADING_MESSAGES[0];
+    els.loadingMessage.textContent = messages[0];
 
-    const totalDuration = 3200 + Math.random() * 1400; // 3.2s - 4.6s
+    // longer plans (more messages) get a bit more time so every line gets seen
+    const totalDuration = Math.max(3200, messages.length * 800) + Math.random() * 900;
     const tickInterval = 90;
     const totalTicks = totalDuration / tickInterval;
     let ticks = 0;
@@ -157,17 +213,29 @@
     }, tickInterval);
 
     loadingMsgTimer = setInterval(() => {
-      msgIndex = (msgIndex + 1) % LOADING_MESSAGES.length;
+      msgIndex = (msgIndex + 1) % messages.length;
       els.loadingMessage.style.opacity = "0";
       setTimeout(() => {
-        els.loadingMessage.textContent = LOADING_MESSAGES[msgIndex];
+        els.loadingMessage.textContent = messages[msgIndex];
         els.loadingMessage.style.opacity = "1";
       }, 150);
-    }, 1000);
+    }, 950);
   }
 
   function finishLoading() {
     hideOverlay(els.loadingOverlay);
+
+    const content = SUCCESS_CONTENT[activePlan.id] || SUCCESS_CONTENT.pro;
+    els.successTitle.textContent = content.title;
+    els.successDesc.textContent = content.desc;
+    if (content.achievement) {
+      els.successAchievement.textContent = content.achievement;
+      els.successAchievement.hidden = false;
+    } else {
+      els.successAchievement.hidden = true;
+      els.successAchievement.textContent = "";
+    }
+
     showOverlay(els.successOverlay);
     if (window.Animations) {
       window.Animations.playSuccess();
@@ -177,8 +245,9 @@
 
   function handleContinue() {
     hideOverlay(els.successOverlay);
+    const purchasedId = activePlan ? activePlan.id : null;
     activePlan = null;
-    if (typeof onPurchaseComplete === "function") onPurchaseComplete();
+    if (typeof onPurchaseComplete === "function") onPurchaseComplete(purchasedId);
   }
 
   function bindEvents() {
