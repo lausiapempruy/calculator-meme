@@ -2,6 +2,11 @@
    notifications.js
    Random fake toast notifications.
    Exposes window.Notifications
+
+   v2.0 SMP Studios Edition:
+   - added football-themed toasts to the rotation
+   - show() now accepts an isAchievement flag so
+     achievements.js can render a distinct gold toast
    ========================================================= */
 (function () {
   "use strict";
@@ -17,6 +22,14 @@
     { icon: "💳", text: "No card was charged. Probably." },
     { icon: "🧮", text: "Multiplication tables restocking soon." },
     { icon: "🛰️", text: "NASA has left your calculator on read." },
+    // --- v2.0 football / SMP Studios toasts ---
+    { icon: "⚽", text: "VAR is checking..." },
+    { icon: "🐐", text: "Messi approved your equation." },
+    { icon: "🐐", text: "Ronaldo celebrated your answer. SIUUUU!" },
+    { icon: "🥅", text: "GOAL!!!" },
+    { icon: "🟨", text: "Penalty awarded." },
+    { icon: "🍌", text: "Banana supply restored." },
+    { icon: "⏱️", text: "Calculator has entered injury time." },
   ];
 
   let containerEl = null;
@@ -28,10 +41,10 @@
     return 9000 + Math.random() * 7000;
   }
 
-  function show(icon, text, duration = 4200) {
+  function show(icon, text, duration = 4200, isAchievement = false) {
     if (!containerEl) return;
     const toast = document.createElement("div");
-    toast.className = "toast";
+    toast.className = "toast" + (isAchievement ? " toast--achievement" : "");
     toast.id = `toast-${++toastCounter}`;
     toast.innerHTML = `<span aria-hidden="true">${icon}</span><span>${text}</span>`;
     containerEl.appendChild(toast);
