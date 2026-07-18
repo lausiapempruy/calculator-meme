@@ -2,6 +2,11 @@
    app.js
    Boots the app: wires calculator UI to Calculator engine,
    hooks up the paywall, memes, toasts, and animations.
+
+   v2.0 SMP Studios Edition: wires the new achievements
+   module to calculator events (first calc, wrong calc,
+   divide-by-zero, 100 calcs, 10 resets) and to plan
+   purchases (GOAT / Billionaire).
    ========================================================= */
 (function () {
   "use strict";
@@ -70,6 +75,23 @@
       }
     });
 
+    /* ---------- Achievement wiring (v2.0) ---------- */
+    window.Calculator.on("first-equals", () => {
+      if (window.Achievements) window.Achievements.unlock("first_goal");
+    });
+    window.Calculator.on("wrong-calc", () => {
+      if (window.Achievements) window.Achievements.unlock("yellow_card");
+    });
+    window.Calculator.on("divide-by-zero", () => {
+      if (window.Achievements) window.Achievements.unlock("red_card");
+    });
+    window.Calculator.on("hundred-equals", () => {
+      if (window.Achievements) window.Achievements.unlock("fake_genius");
+    });
+    window.Calculator.on("ten-resets", () => {
+      if (window.Achievements) window.Achievements.unlock("banana_collector");
+    });
+
     keypad.addEventListener("click", (e) => {
       const btn = e.target.closest(".key");
       if (!btn || btn.disabled) return;
@@ -129,8 +151,12 @@
 
     /* ---------- Payment wiring ---------- */
     window.Payment.init({
-      onComplete: () => {
+      onComplete: (planId) => {
         window.Calculator.unlock();
+        if (window.Achievements) {
+          if (planId === "ultimate") window.Achievements.unlock("goat");
+          if (planId === "universe") window.Achievements.unlock("billionaire");
+        }
       },
     });
 
