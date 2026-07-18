@@ -22,6 +22,7 @@
       <div class="brand__badge">AI++</div>
       <h1 class="brand__title">Calculator <span>Pro Max Ultra Universe</span></h1>
       <p class="brand__subtitle">Now with 300% more premium.</p>
+      <div class="brand__mascots" aria-hidden="true">⚽ 🍌 🏆</div>
     </header>
 
     <section class="calculator" id="calculator">
@@ -117,7 +118,8 @@
         </svg>
       </div>
       <h2 class="modal__title" id="successTitle">Payment Successful!</h2>
-      <p class="modal__desc">You definitely didn't pay anything.</p>
+      <p class="modal__desc" id="successDesc">You definitely didn't pay anything.</p>
+      <p class="modal__achievement" id="successAchievement" hidden></p>
       <div class="modal__actions modal__actions--center">
         <button class="btn btn--primary" id="continueBtn">Continue</button>
       </div>
@@ -126,8 +128,12 @@
 
   <canvas id="confettiCanvas" aria-hidden="true"></canvas>
 
+  <!-- SMP Studios badge (v2.0) — small, bottom corner, non-intrusive -->
+  <div class="smp-badge" aria-hidden="true">🍌 Made by SMP Studios</div>
+
   <script src="js/memes.js"></script>
   <script src="js/notifications.js"></script>
+  <script src="js/achievements.js"></script>
   <script src="js/animations.js"></script>
   <script src="js/calculator.js"></script>
   <script src="js/payment.js"></script>
