@@ -25,6 +25,18 @@ A premium-looking, iOS-inspired calculator that is secretly a parody of predator
 
 ---
 
+## 🏆 v2.0 — "SMP Studios Edition"
+
+A funny DLC-style update on top of v1.0, still iOS-minimal, still glassmorphism, still dark mode:
+
+- **Football memes** woven into the footer and toast rotations (VAR checks, penalties, offside, GOAT references).
+- **Messi & Ronaldo easter eggs** — playful, satirical, always positive toward both players.
+- **Per-plan fake payment sequences** — Pro Pack, Ultimate Pack, and Universe Pack each have their own loading messages and success screen copy (`js/payment.js`).
+- **Achievement system** (`js/achievements.js`, new file) — 7 funny badges (First Goal, Yellow Card, Red Card, GOAT, Billionaire, Banana Collector, Fake Genius) that pop in as a gold toast when unlocked.
+- **SMP Studios branding** — a small, quiet "Made by SMP Studios" badge in the bottom corner, plus a subtle ⚽ 🍌 🏆 mascot row under the title. Nothing intrusive, nothing copyrighted.
+
+---
+
 ## 🚀 How to run
 
 No build tools, no npm install, no server required.
@@ -57,6 +69,7 @@ calculator-premium/
 │   ├── payment.js          # Fake subscription modal + fake payment flow logic
 │   ├── memes.js            # Rotating footer joke text
 │   ├── notifications.js    # Random toast notification system
+│   ├── achievements.js     # v2.0 — funny badge/achievement system
 │   ├── animations.js       # Confetti, button ripple, and misc animation helpers
 │   └── app.js               # Wires every module together and boots the app
 │
