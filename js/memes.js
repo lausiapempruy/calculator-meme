@@ -2,6 +2,9 @@
    memes.js
    Rotating meme/joke text for the footer.
    Exposes window.Memes
+
+   v2.0 SMP Studios Edition: added football/SMP-flavored lines
+   into the same rotation (randomized, not overused).
    ========================================================= */
 (function () {
   "use strict";
@@ -25,6 +28,19 @@
     "Long division sold separately.",
     "Now optimized for maximum billing.",
     "Pi is only 90% accurate on the free tier.",
+    // --- v2.0 football / SMP Studios lines ---
+    "⚽ Penalty for using calculator.",
+    "VAR is checking your calculation...",
+    "Offside! Your answer has been cancelled.",
+    "Goal!!! 20 + 20 = 40",
+    "🟨 Yellow Card: Wrong Formula",
+    "🟥 Red Card: Division by Zero",
+    "The referee added 7 minutes of calculation.",
+    "🐐 Messi approved this answer.",
+    "Ronaldo says SIUUUU! 🐐",
+    "Ballon d'Or Calculator 🏆",
+    "Made by SMP Studios 🍌⚽",
+    "Squad Minion Plenger approves this math.",
   ];
 
   let timerId = null;
