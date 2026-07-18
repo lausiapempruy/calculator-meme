@@ -2,6 +2,12 @@
    calculator.js
    Core calculator engine: state, math, and usage limiter.
    Exposes window.Calculator
+
+   v2.0 SMP Studios Edition:
+   - tracks lifetime stats (total equals, reset count)
+   - emits extra events for the achievement system:
+     "first-equals", "wrong-calc", "divide-by-zero",
+     "hundred-equals", "reset", "ten-resets"
    ========================================================= */
 (function () {
   "use strict";
@@ -15,6 +21,8 @@
     justEvaluated: false,
     usage: 0,
     locked: false,
+    totalEquals: 0,
+    resetCount: 0,
   };
 
   const listeners = {
@@ -103,7 +111,7 @@
       case "-": result = a - b; break;
       case "×": result = a * b; break;
       case "÷": result = b === 0 ? NaN : a / b; break;
-      case "%": result = a % b; break;
+      case "%": result = b === 0 ? NaN : a % b; break;
       default: result = b;
     }
     if (!isFinite(result)) return NaN;
@@ -118,8 +126,15 @@
       return;
     }
 
+    let isError = false;
+    let isDivideByZero = false;
+
     if (state.operator !== null && state.previousValue !== null) {
+      if (state.operator === "÷" && parseFloat(state.currentValue) === 0) {
+        isDivideByZero = true;
+      }
       const result = compute();
+      if (isNaN(result)) isError = true;
       state.currentValue = isNaN(result) ? "Error" : String(result);
       state.previousValue = null;
       state.operator = null;
@@ -128,8 +143,18 @@
     state._awaitingNext = false;
 
     state.usage += 1;
+    state.totalEquals += 1;
+
     emit("change", getSnapshot());
-    emit("equals", getSnapshot());
+    emit("equals", { ...getSnapshot(), isError, isDivideByZero, totalEquals: state.totalEquals });
+
+    if (state.totalEquals === 1) emit("first-equals", getSnapshot());
+    if (isDivideByZero) {
+      emit("divide-by-zero", getSnapshot());
+    } else if (isError) {
+      emit("wrong-calc", getSnapshot());
+    }
+    if (state.totalEquals === 100) emit("hundred-equals", getSnapshot());
 
     if (state.usage >= MAX_USAGE) {
       lock();
@@ -161,12 +186,19 @@
 
   function clearAll() {
     if (state.locked) return;
+    const hadContent = state.currentValue !== "0" || state.operator !== null || state.previousValue !== null;
     state.currentValue = "0";
     state.previousValue = null;
     state.operator = null;
     state.justEvaluated = false;
     state._awaitingNext = false;
     emit("change", getSnapshot());
+
+    if (hadContent) {
+      state.resetCount += 1;
+      emit("reset", { count: state.resetCount });
+      if (state.resetCount === 10) emit("ten-resets", getSnapshot());
+    }
   }
 
   function lock() {
@@ -196,6 +228,8 @@
       usage: state.usage,
       maxUsage: MAX_USAGE,
       locked: state.locked,
+      totalEquals: state.totalEquals,
+      resetCount: state.resetCount,
     };
   }
 
