@@ -29,6 +29,7 @@
 
       <div class="calculator__topbar">
         <span class="usage-pill" id="usagePill">Usage: 0 / 5</span>
+        <button class="icon-btn" id="aboutBtn" type="button" aria-label="About this project">ℹ️</button>
         <span class="status-dot" id="statusDot" title="System status"></span>
       </div>
 
@@ -119,6 +120,7 @@
       </div>
       <h2 class="modal__title" id="successTitle">Payment Successful!</h2>
       <p class="modal__desc" id="successDesc">You definitely didn't pay anything.</p>
+      <div id="successAvatars"></div>
       <p class="modal__achievement" id="successAchievement" hidden></p>
       <div class="modal__actions modal__actions--center">
         <button class="btn btn--primary" id="continueBtn">Continue</button>
@@ -128,12 +130,37 @@
 
   <canvas id="confettiCanvas" aria-hidden="true"></canvas>
 
-  <!-- SMP Studios badge (v2.0) — small, bottom corner, non-intrusive -->
+  <!-- ===================== ABOUT / CREDITS DIALOG (v2.1) ===================== -->
+  <div class="overlay" id="aboutOverlay" hidden>
+    <div class="modal modal--about" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+      <div class="modal__icon">🍌</div>
+      <h2 class="modal__title" id="aboutTitle">About &amp; Credits</h2>
+      <p class="modal__desc">A parody calculator built by SMP Studios (Squad Minion Plenger). Every price is fake, every subscription is a joke, every achievement means nothing.</p>
+
+      <div id="aboutAvatars"></div>
+
+      <ul class="credits-list">
+        <li><span>Design &amp; Code</span><span>SMP Studios</span></li>
+        <li><span>Football Commentary</span><span>Certified nobody</span></li>
+        <li><span>Gaming References</span><span>Original, not official</span></li>
+        <li><span>Fake Money</span><span>Printed locally</span></li>
+      </ul>
+
+      <div class="modal__actions modal__actions--center">
+        <button class="btn btn--primary" id="aboutCloseBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SMP Studios badge — small, bottom corner, non-intrusive -->
   <div class="smp-badge" aria-hidden="true">🍌 Made by SMP Studios</div>
 
   <script src="js/memes.js"></script>
   <script src="js/notifications.js"></script>
+  <script src="js/avatars.js"></script>
+  <script src="js/gaming.js"></script>
   <script src="js/achievements.js"></script>
+  <script src="js/sticker.js"></script>
   <script src="js/animations.js"></script>
   <script src="js/calculator.js"></script>
   <script src="js/payment.js"></script>
