@@ -7,6 +7,13 @@
    - added football-themed toasts to the rotation
    - show() now accepts an isAchievement flag so
      achievements.js can render a distinct gold toast
+
+   v2.1 Gaming & Community Update:
+   - mixes original Minecraft/Roblox/Free Fire style toasts
+     (from window.Gaming) into the same rotation
+   - reports which gaming category was just shown to
+     window.Gaming, so the "Gamer" achievement can unlock
+     once all three have appeared at least once
    ========================================================= */
 (function () {
   "use strict";
@@ -31,6 +38,18 @@
     { icon: "🍌", text: "Banana supply restored." },
     { icon: "⏱️", text: "Calculator has entered injury time." },
   ];
+
+  function buildToastPool() {
+    // Static toasts + whatever gaming.js currently exposes, tagged
+    // with a category so we can report back which one was shown.
+    const pool = TOASTS.map((t) => ({ ...t, category: null }));
+    if (window.Gaming) {
+      window.Gaming.MINECRAFT_LINES.forEach((t) => pool.push({ ...t, category: "minecraft" }));
+      window.Gaming.ROBLOX_LINES.forEach((t) => pool.push({ ...t, category: "roblox" }));
+      window.Gaming.FREEFIRE_LINES.forEach((t) => pool.push({ ...t, category: "freefire" }));
+    }
+    return pool;
+  }
 
   let containerEl = null;
   let timerId = null;
@@ -63,8 +82,12 @@
   }
 
   function showRandom() {
-    const pick = TOASTS[Math.floor(Math.random() * TOASTS.length)];
+    const pool = buildToastPool();
+    const pick = pool[Math.floor(Math.random() * pool.length)];
     show(pick.icon, pick.text);
+    if (pick.category && window.Gaming) {
+      window.Gaming.noteCategoryTriggered(pick.category);
+    }
     schedule();
   }
 
