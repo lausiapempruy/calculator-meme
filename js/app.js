@@ -3,10 +3,15 @@
    Boots the app: wires calculator UI to Calculator engine,
    hooks up the paywall, memes, toasts, and animations.
 
-   v2.0 SMP Studios Edition: wires the new achievements
-   module to calculator events (first calc, wrong calc,
-   divide-by-zero, 100 calcs, 10 resets) and to plan
-   purchases (GOAT / Billionaire).
+   v2.0 SMP Studios Edition: wires the achievements module
+   to calculator events (first calc, wrong calc, divide-by-
+   zero, 100 calcs) and to plan purchases (GOAT / Billionaire).
+
+   v2.1 Gaming & Community Update:
+   - wires the About/Credits dialog (with avatars)
+   - rolls random events + easter eggs on every calculation
+   - wires the new Miner / Builder / Gamer / Survivor /
+     Champion / Multiverse achievements
    ========================================================= */
 (function () {
   "use strict";
@@ -58,8 +63,18 @@
     /* ---------- Calculator wiring ---------- */
     window.Calculator.on("change", render);
 
-    window.Calculator.on("equals", () => {
+    window.Calculator.on("equals", (snapshot) => {
       if (window.Animations) window.Animations.playClick();
+
+      // v2.1: every calculation has a shot at a random event or a
+      // rare easter egg — text-only, calculator logic is untouched.
+      if (window.Gaming) {
+        window.Gaming.maybeTriggerRandomEvent();
+        window.Gaming.checkEasterEggs();
+      }
+      if (window.Achievements && snapshot.totalEquals === 20) {
+        window.Achievements.unlock("miner");
+      }
     });
 
     window.Calculator.on("locked", () => {
@@ -75,7 +90,7 @@
       }
     });
 
-    /* ---------- Achievement wiring (v2.0) ---------- */
+    /* ---------- Achievement wiring ---------- */
     window.Calculator.on("first-equals", () => {
       if (window.Achievements) window.Achievements.unlock("first_goal");
     });
@@ -91,6 +106,18 @@
     window.Calculator.on("ten-resets", () => {
       if (window.Achievements) window.Achievements.unlock("banana_collector");
     });
+    // v2.1
+    window.Calculator.on("five-resets", () => {
+      if (window.Achievements) window.Achievements.unlock("builder");
+    });
+    window.Calculator.on("streak-five", () => {
+      if (window.Achievements) window.Achievements.unlock("survivor");
+    });
+    if (window.Gaming) {
+      window.Gaming.on("all-games-triggered", () => {
+        if (window.Achievements) window.Achievements.unlock("gamer");
+      });
+    }
 
     keypad.addEventListener("click", (e) => {
       const btn = e.target.closest(".key");
@@ -154,11 +181,42 @@
       onComplete: (planId) => {
         window.Calculator.unlock();
         if (window.Achievements) {
-          if (planId === "ultimate") window.Achievements.unlock("goat");
-          if (planId === "universe") window.Achievements.unlock("billionaire");
+          if (planId === "ultimate") {
+            window.Achievements.unlock("goat");
+            window.Achievements.unlock("champion");
+          }
+          if (planId === "universe") {
+            window.Achievements.unlock("billionaire");
+            window.Achievements.unlock("multiverse");
+          }
         }
       },
     });
+
+    /* ---------- About / Credits dialog (v2.1) ---------- */
+    const aboutBtn = document.getElementById("aboutBtn");
+    const aboutOverlay = document.getElementById("aboutOverlay");
+    const aboutCloseBtn = document.getElementById("aboutCloseBtn");
+    const aboutAvatars = document.getElementById("aboutAvatars");
+
+    if (aboutBtn && aboutOverlay) {
+      aboutBtn.addEventListener("click", () => {
+        if (aboutAvatars && window.Avatars) {
+          aboutAvatars.innerHTML = window.Avatars.renderDuo();
+        }
+        aboutOverlay.hidden = false;
+      });
+    }
+    if (aboutCloseBtn && aboutOverlay) {
+      aboutCloseBtn.addEventListener("click", () => {
+        aboutOverlay.hidden = true;
+      });
+    }
+    if (aboutOverlay) {
+      aboutOverlay.addEventListener("click", (e) => {
+        if (e.target === aboutOverlay) aboutOverlay.hidden = true;
+      });
+    }
 
     /* ---------- Initial paint ---------- */
     render(window.Calculator.getSnapshot());
