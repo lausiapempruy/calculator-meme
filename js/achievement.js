@@ -1,8 +1,14 @@
 /* =========================================================
-   achievements.js  (NEW in v2.0 — SMP Studios Edition)
+   achievements.js
    Tracks funny in-session achievements and shows a gold
    toast via Notifications when one is unlocked.
    Exposes window.Achievements
+
+   v2.1 Gaming & Community Update:
+   - added Miner, Builder, Gamer, Survivor, Champion,
+     Multiverse badges
+   - unlock toasts occasionally include a one-line visitor
+     avatar reaction (via window.Avatars)
    ========================================================= */
 (function () {
   "use strict";
@@ -43,6 +49,37 @@
       name: "Fake Genius",
       desc: "Calculate 100 equations.",
     },
+    // --- v2.1 Gaming & Community Update ---
+    miner: {
+      icon: "⛏️",
+      name: "Miner",
+      desc: "Perform 20 calculations.",
+    },
+    builder: {
+      icon: "🧱",
+      name: "Builder",
+      desc: "Reset calculator 5 times.",
+    },
+    gamer: {
+      icon: "🎮",
+      name: "Gamer",
+      desc: "Trigger all gaming events.",
+    },
+    survivor: {
+      icon: "🔥",
+      name: "Survivor",
+      desc: "Reach 5 calculations without mistakes.",
+    },
+    champion: {
+      icon: "⚽",
+      name: "Champion",
+      desc: "Purchase Ultimate Pack.",
+    },
+    multiverse: {
+      icon: "🌌",
+      name: "Multiverse",
+      desc: "Purchase Universe Pack.",
+    },
   };
 
   const unlocked = new Set();
@@ -52,13 +89,13 @@
     if (!achievement || unlocked.has(id)) return;
     unlocked.add(id);
 
+    let text = `Achievement Unlocked: ${achievement.name} — ${achievement.desc}`;
+    if (window.Avatars && Math.random() < 0.4) {
+      text += ` "${window.Avatars.getRandomVisitorLine()}"`;
+    }
+
     if (window.Notifications) {
-      window.Notifications.show(
-        achievement.icon,
-        `Achievement Unlocked: ${achievement.name} — ${achievement.desc}`,
-        4600,
-        true
-      );
+      window.Notifications.show(achievement.icon, text, 4800, true);
     }
   }
 
