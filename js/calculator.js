@@ -8,6 +8,11 @@
    - emits extra events for the achievement system:
      "first-equals", "wrong-calc", "divide-by-zero",
      "hundred-equals", "reset", "ten-resets"
+
+   v2.1 Gaming & Community Update:
+   - tracks a "correct streak" (equals in a row with no
+     error) and emits "streak-five" for the Survivor badge
+   - emits "five-resets" for the Builder badge
    ========================================================= */
 (function () {
   "use strict";
@@ -23,6 +28,7 @@
     locked: false,
     totalEquals: 0,
     resetCount: 0,
+    correctStreak: 0,
   };
 
   const listeners = {
@@ -145,6 +151,12 @@
     state.usage += 1;
     state.totalEquals += 1;
 
+    if (isError) {
+      state.correctStreak = 0;
+    } else {
+      state.correctStreak += 1;
+    }
+
     emit("change", getSnapshot());
     emit("equals", { ...getSnapshot(), isError, isDivideByZero, totalEquals: state.totalEquals });
 
@@ -155,6 +167,7 @@
       emit("wrong-calc", getSnapshot());
     }
     if (state.totalEquals === 100) emit("hundred-equals", getSnapshot());
+    if (state.correctStreak === 5) emit("streak-five", getSnapshot());
 
     if (state.usage >= MAX_USAGE) {
       lock();
@@ -197,6 +210,7 @@
     if (hadContent) {
       state.resetCount += 1;
       emit("reset", { count: state.resetCount });
+      if (state.resetCount === 5) emit("five-resets", getSnapshot());
       if (state.resetCount === 10) emit("ten-resets", getSnapshot());
     }
   }
@@ -230,6 +244,7 @@
       locked: state.locked,
       totalEquals: state.totalEquals,
       resetCount: state.resetCount,
+      correctStreak: state.correctStreak,
     };
   }
 
