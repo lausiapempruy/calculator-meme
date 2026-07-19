@@ -8,6 +8,13 @@
    - each plan now has its own success title/description
    - purchase completion reports which plan id was bought,
      so app.js can unlock plan-specific achievements
+
+   v2.1 Gaming & Community Update:
+   - blended gaming/event loading lines into each plan
+   - success screen now shows the two SMP Studios avatars
+     with a random speech-bubble reaction each time
+   - a "TERIMA KASIH" thank-you sticker pops in after every
+     successful fake payment
    ========================================================= */
 (function () {
   "use strict";
@@ -39,13 +46,17 @@
     },
   ];
 
-  // Distinct fake loading sequences per plan (v2.0)
+  // Distinct fake loading sequences per plan.
+  // v2.1: each plan folds in a few gaming/football/NASA lines from the
+  // "mix everything together" update, on top of its own v2.0 flavor.
   const LOADING_MESSAGES = {
     pro: [
       "Connecting to Calculator Server...",
       "Borrowing money from your friend...",
       "Counting coins...",
       "Finding discount coupon...",
+      "Talking to NASA...",
+      "Crafting Premium Calculator...",
       "Almost there...",
       "Payment accepted!",
     ],
@@ -54,6 +65,8 @@
       "Asking Messi for approval...",
       "VAR is reviewing your payment...",
       "Ronaldo shouted SIUUUU...",
+      "Joining Roblox server...",
+      "Safe Zone shrinking...",
       "Bank says \"bro really?\"",
       "Unlocking Premium Numbers...",
       "Installing Extra Intelligence...",
@@ -65,18 +78,23 @@
       "Summoning football gods...",
       "Messi and Ronaldo are discussing your purchase...",
       "Finding Banana Galaxy...",
+      "Mining Bananas...",
       "Searching for Universe Pack license...",
       "Generating Infinite IQ...",
       "Installing Quantum Mathematics...",
+      "Loading Football DLC...",
+      "Finding Diamonds...",
       "Downloading Football DLC...",
       "Talking to aliens...",
       "Negotiating with Angry Birds...",
+      "Booyah!!",
       "Unlocking Calculator Multiverse...",
+      "Teleporting to Universe...",
       "Removing Skill Issue...",
     ],
   };
 
-  // Distinct success screen copy per plan (v2.0)
+  // Distinct success screen copy per plan.
   const SUCCESS_CONTENT = {
     pro: {
       title: "Payment Successful!",
@@ -130,6 +148,7 @@
       successOverlay: document.getElementById("successOverlay"),
       successTitle: document.getElementById("successTitle"),
       successDesc: document.getElementById("successDesc"),
+      successAvatars: document.getElementById("successAvatars"),
       successAchievement: document.getElementById("successAchievement"),
       continueBtn: document.getElementById("continueBtn"),
     };
@@ -196,7 +215,7 @@
     els.loadingMessage.textContent = messages[0];
 
     // longer plans (more messages) get a bit more time so every line gets seen
-    const totalDuration = Math.max(3200, messages.length * 800) + Math.random() * 900;
+    const totalDuration = Math.max(3200, messages.length * 750) + Math.random() * 900;
     const tickInterval = 90;
     const totalTicks = totalDuration / tickInterval;
     let ticks = 0;
@@ -219,7 +238,7 @@
         els.loadingMessage.textContent = messages[msgIndex];
         els.loadingMessage.style.opacity = "1";
       }, 150);
-    }, 950);
+    }, 900);
   }
 
   function finishLoading() {
@@ -236,10 +255,17 @@
       els.successAchievement.textContent = "";
     }
 
+    if (els.successAvatars) {
+      els.successAvatars.innerHTML = window.Avatars ? window.Avatars.renderDuo() : "";
+    }
+
     showOverlay(els.successOverlay);
     if (window.Animations) {
       window.Animations.playSuccess();
       window.Animations.burstConfetti();
+    }
+    if (window.ThanksSticker) {
+      window.ThanksSticker.show();
     }
   }
 
